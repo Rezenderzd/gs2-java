@@ -232,12 +232,27 @@ Todo integrante deve saber explicar estes pontos:
 ---
 
 ## 8. Uso de IA
-- **Onde usamos:** usamos IA generativa (Claude, da Anthropic) como apoio para analisar o enunciado e montar a checklist de requisitos, sugerir a arquitetura a partir dos exemplos das Aulas 11 a 15, gerar uma primeira versão do código, dos testes e deste README, e aplicar as correções das revisões.
-- *Como revisamos:* nenhum trecho gerado pela IA entrou sem que o responsável (seção 9) lesse, executasse e conseguisse explicar o código.
-  - *Comparação com as aulas:* usamos o material das Aulas 1 a 15 como critério. O que a IA sugeriu fora do que vimos em aula foi trocado ou ficou documentado na seção 6, para todos saberem explicar.
-  - *Fernando (persistência e serviço):* (ex.: rodou o script-oracle.sql no SQL Developer, conferiu se as colunas batem com as entidades, executou o ServicoMonitoramentoTest e conferiu no banco se o alerta não duplica).
-  - *Guilherme (domínio e exceções):* (ex.: revisou SensorBase, Limiar e os Builders comparando com as Aulas 8, 9 e 14; testou pelo menu população negativa, código errado e limiares fora de ordem).
-  - *Raphael (menu e Spring Boot):* (ex.: seguiu o roteiro da seção 2 do começo ao fim, conferiu o CSV no Excel e validou o projeto num clone limpo).
+
+*Onde usamos:* usamos IA generativa (Claude, da Anthropic) para analisar o enunciado e montar a checklist de requisitos, sugerir a arquitetura a partir dos exemplos das Aulas 11 a 15, gerar uma primeira versão do código, dos testes e deste README, e aplicar as correções apontadas nas revisões.
+
+*Como revisamos:* cada integrante revisou a parte do seu commit, rodou o projeto no IntelliJ conectado ao Oracle da FIAP e conferiu o funcionamento pelo menu: leituras gravadas, alertas, exportação do CSV e o SQL gerado pelo Hibernate no console. Quando não entendíamos um trecho, como o synchronized do Singleton, procurávamos o conceito nas aulas antes de manter o código.
+
+- *Guilherme (domínio e exceções):* Revisei as classes de dominio/, rodei o MedicaoTest e o PrevisaoMediaMovelTest e conferi as contas da média móvel na mão. Revi as Aulas 8 e 9 para relembrar a diferença entre a interface Sensor e a classe abstrata SensorBase. Questionei o enum dos níveis de alerta, que não foi visto em aula, e o código repetido nos sensores, o que levou à criação da SensorBase.
+- *Fernando (persistência e serviços):* Rodei o script-oracle.sql no Oracle da FIAP, configurei o application.properties com meu RM e confirmei que os alertas não se repetiam. Estudei como o Spring gera o SQL a partir do nome do método e para que serve o synchronized, que encontrei na Aula 15. Troquei o banco de H2 para o Oracle e questionei a justificativa do Singleton.
+- *Raphael (menu e README):* Rodei o sistema no IntelliJ, passei pelas cinco opções do menu e fiz diversos testes de inputs errados para ver se o programa não fechava. Estudei como o CommandLineRunner inicia o menu depois que o Spring sobe. Pedi a troca das concatenações por String.format e printf e reescrevi o “Como revisamos”.
+
+*O que mudamos ou recusamos da IA:*
+1. *Banco de dados:* a IA propôs H2 em arquivo. Trocamos para o *Oracle da FIAP*, com a configuração da Aula 13, o driver ojdbc11, ddl-auto=none e um script SQL próprio para criar as tabelas.
+2. *Material das aulas como critério:* exigimos que o código usasse só o que foi visto em aula e, no resto, a forma mais básica (for, while, String.format, System.out.printf). Por isso trocamos o enum dos níveis de alerta por constantes String, como as categorias do Produto, e removemos um método static dentro de interface.
+3. *Tecnologia:* testamos uma versão com JDBC puro e DAOs (Aula 12), mas voltamos para *Spring Boot + JPA* (Aulas 13 a 15), mantendo as pastas da estrutura sugerida no enunciado.
+4. *Escopo:* recusamos classes extras que a IA tinha criado e que não eram pedidas, como um Builder de relatório e interfaces auxiliares. Ficaram só as que resolvem requisitos ou problemas reais.
+5. *Justificativa do Singleton:* a IA justificou o getInstancia() dizendo que a fábrica e o menu não eram beans do Spring, o que estava errado. Corrigimos o README com o motivo verdadeiro: a estrutura pede o Singleton clássico da Aula 14.
+6. *Problemas que encontramos na revisão e pedimos para corrigir:*
+   - alertas duplicados quando a previsão rodava várias vezes;
+   - alertas gerados a partir de leituras antigas;
+   - status do ponto definido por sorteio;
+   - código repetido nos três sensores (resolvido com a classe abstrata SensorBase);
+   - método alterarLimiares com 6 parâmetros (passou a receber um objeto Limiar).
 
 ---
 
